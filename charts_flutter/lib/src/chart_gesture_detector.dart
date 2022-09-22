@@ -20,6 +20,7 @@ import 'package:flutter/material.dart'
         BuildContext,
         GestureDetector,
         RenderBox,
+        MouseRegion,
         ScaleEndDetails,
         ScaleStartDetails,
         ScaleUpdateDetails,
@@ -63,13 +64,21 @@ class ChartGestureDetector {
     _listeningForLongPress = desiredGestures.contains(GestureType.onLongPress);
 
     return new GestureDetector(
-      child: chartContainer,
+      child: MouseRegion(
+          child: chartContainer,
+          onHover: (e) => onHover(e.position.dx, e.position.dy)),
       onTapDown: wantTapDown ? onTapDown : null,
       onTapUp: wantTap ? onTapUp : null,
       onScaleStart: wantDrag ? onScaleStart : null,
       onScaleUpdate: wantDrag ? onScaleUpdate : null,
       onScaleEnd: wantDrag ? onScaleEnd : null,
     );
+  }
+
+  void onHover(double x, y) {
+    final container = _containerResolver();
+    _lastTapPoint = new Point(x, y);
+    container.gestureProxy.onHover(_lastTapPoint);
   }
 
   void onTapDown(TapDownDetails d) {
