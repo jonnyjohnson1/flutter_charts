@@ -72,8 +72,10 @@ class ProxyGestureListener {
 
   bool onHover(Point<double> localPosition) {
     // Cancel any previously active long lived gestures.
-    _activeListeners = <GestureListener>[];
-
+    // _activeListeners = <GestureListener>[];
+    final claimingListener = _activeListeners.firstWhereOrNull(
+        (GestureListener listener) =>
+            listener.onTap?.call(localPosition) ?? false);
     // Walk through listeners stopping at the first handled listener.
     return _listeners.any((GestureListener listener) =>
         listener.onHover?.call(localPosition) ?? false);

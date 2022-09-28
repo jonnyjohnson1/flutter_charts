@@ -15,7 +15,7 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
+
 import 'package:charts_flutter/flutter.dart' as charts;
 
 void main() {
@@ -38,7 +38,7 @@ void main() {
     await tester.pumpWidget(
       new Directionality(
         textDirection: TextDirection.ltr,
-        child: MaterialApp(home: testChart),
+        child: testChart,
       ),
     );
 
