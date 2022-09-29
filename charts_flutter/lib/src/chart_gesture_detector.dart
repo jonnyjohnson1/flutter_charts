@@ -21,9 +21,11 @@ import 'package:flutter/material.dart'
         GestureDetector,
         RenderBox,
         ScaleEndDetails,
+        MouseRegion,
         ScaleStartDetails,
         ScaleUpdateDetails,
         TapDownDetails,
+        Offset,
         TapUpDetails;
 
 import 'behaviors/chart_behavior.dart' show GestureType;
@@ -55,21 +57,39 @@ class ChartGestureDetector {
     final wantTapDown = desiredGestures.isNotEmpty;
     final wantTap = desiredGestures.contains(GestureType.onTap);
     final wantDrag = desiredGestures.contains(GestureType.onDrag);
+    final wantHover = desiredGestures.contains(GestureType.onHover);
 
     // LongPress is special, we'd like to be able to trigger long press before
     // Drag/Press to trigger tooltips then explore with them. This means we
     // can't rely on gesture detection since it will block out the scale
     // gestures.
     _listeningForLongPress = desiredGestures.contains(GestureType.onLongPress);
-
     return new GestureDetector(
-      child: chartContainer,
+      child: MouseRegion(
+          child: chartContainer,
+          onEnter: (e) => onEnter(e.position.dx, e.position.dy),
+          onHover: (e) =>
+              wantHover ? onHover(e.position.dx, e.position.dy) : null),
       onTapDown: wantTapDown ? onTapDown : null,
       onTapUp: wantTap ? onTapUp : null,
       onScaleStart: wantDrag ? onScaleStart : null,
       onScaleUpdate: wantDrag ? onScaleUpdate : null,
       onScaleEnd: wantDrag ? onScaleEnd : null,
     );
+  }
+
+  void onEnter(double x, y) {
+    final container = _containerResolver();
+    final localPosition = container.globalToLocal(Offset(x, y));
+    _lastTapPoint = new Point(localPosition.dx, localPosition.dy);
+    container.gestureProxy.onTapTest(_lastTapPoint!);
+  }
+
+  void onHover(double x, y) {
+    final container = _containerResolver();
+    final localPosition = container.globalToLocal(Offset(x, y));
+    _lastTapPoint = new Point(localPosition.dx, localPosition.dy);
+    container.gestureProxy.onHover(_lastTapPoint!);
   }
 
   void onTapDown(TapDownDetails d) {
