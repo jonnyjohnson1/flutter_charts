@@ -195,7 +195,7 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint implements common.
 
     // Sometimes chart behaviors try to draw the chart outside of a Flutter draw
     // cycle. Schedule a frame manually to handle these cases.
-    if (!SchedulerBinding.instance!.hasScheduledFrame) {
+    if (!SchedulerBinding.instance.hasScheduledFrame) {
       SchedulerBinding.instance.scheduleFrame();
     }
 
