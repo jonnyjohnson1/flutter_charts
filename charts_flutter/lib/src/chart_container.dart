@@ -62,15 +62,13 @@ class ChartContainer<D> extends CustomPaint {
   }
 
   @override
-  void updateRenderObject(
-      BuildContext context, ChartContainerRenderObject renderObject) {
+  void updateRenderObject(BuildContext context, ChartContainerRenderObject renderObject) {
     renderObject.reconfigure(this, context);
   }
 }
 
 /// [RenderCustomPaint] that implements common [ChartContext].
-class ChartContainerRenderObject<D> extends RenderCustomPaint
-    implements common.ChartContext {
+class ChartContainerRenderObject<D> extends RenderCustomPaint implements common.ChartContext {
   common.BaseChart<D>? _chart;
   List<common.Series<dynamic, D>>? _seriesList;
   late BaseChartState<D> _chartState;
@@ -95,8 +93,7 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint
       common.Performance.timeEnd('chartsCreate');
     }
     common.Performance.time('chartsConfig');
-    config.chartWidget
-        .updateCommonChart(_chart!, config.oldChartWidget, _chartState);
+    config.chartWidget.updateCommonChart(_chart!, config.oldChartWidget, _chartState);
 
     _rtlSpec = config.rtlSpec;
     _chartContainerIsRtl = config.rtl;
@@ -113,8 +110,7 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint
     // does not reprocess the series.
     //
     // Series list is considered "changed" based on the instance.
-    if (_seriesList != config.chartWidget.seriesList ||
-        _chartState.chartIsDirty) {
+    if (_seriesList != config.chartWidget.seriesList || _chartState.chartIsDirty) {
       _chartState.resetChartDirtyFlag();
       _seriesList = config.chartWidget.seriesList;
 
@@ -153,12 +149,10 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint
     for (common.SelectionModelType type in newState.selectionModels.keys) {
       final model = _chart!.getSelectionModel(type);
 
-      final userModel =
-          newState.selectionModels[type]!.getModel(_chart!.currentSeriesList);
+      final userModel = newState.selectionModels[type]!.getModel(_chart!.currentSeriesList);
 
       if (model != userModel) {
-        model.updateSelection(
-            userModel.selectedDatum, userModel.selectedSeries);
+        model.updateSelection(userModel.selectedDatum, userModel.selectedSeries);
       }
     }
   }
@@ -166,8 +160,7 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint
   @override
   void performLayout() {
     common.Performance.time('chartsLayout');
-    _chart!
-        .measure(constraints.maxWidth.toInt(), constraints.maxHeight.toInt());
+    _chart!.measure(constraints.maxWidth.toInt(), constraints.maxHeight.toInt());
     _chart!.layout(constraints.maxWidth.toInt(), constraints.maxHeight.toInt());
     common.Performance.timeEnd('chartsLayout');
     size = constraints.biggest;
@@ -203,10 +196,10 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint
     // Sometimes chart behaviors try to draw the chart outside of a Flutter draw
     // cycle. Schedule a frame manually to handle these cases.
     if (!SchedulerBinding.instance!.hasScheduledFrame) {
-      SchedulerBinding.instance!.scheduleFrame();
+      SchedulerBinding.instance.scheduleFrame();
     }
 
-    SchedulerBinding.instance!.addPostFrameCallback(startAnimationController);
+    SchedulerBinding.instance.addPostFrameCallback(startAnimationController);
   }
 
   /// Request Flutter to rebuild the widget/container of chart.
@@ -229,7 +222,7 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint
     // This is needed to request rebuild after the legend has been added in the
     // post process phase of the chart, which happens during the chart widget's
     // build cycle.
-    SchedulerBinding.instance!.addPostFrameCallback(doRebuild);
+    SchedulerBinding.instance.addPostFrameCallback(doRebuild);
   }
 
   /// When Flutter's markNeedsLayout is called, layout and paint are both
@@ -253,9 +246,7 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint
 
   @override
   bool get isRtl =>
-      _chartContainerIsRtl &&
-      (_rtlSpec == null ||
-          _rtlSpec?.axisDirection == common.AxisDirection.reversed);
+      _chartContainerIsRtl && (_rtlSpec == null || _rtlSpec?.axisDirection == common.AxisDirection.reversed);
 
   @override
   bool get isTappable => _chart!.isTappable;
@@ -266,12 +257,10 @@ class ChartContainerRenderObject<D> extends RenderCustomPaint
   /// Gets the chart's gesture listener.
   common.ProxyGestureListener get gestureProxy => _chart!.gestureProxy;
 
-  TextDirection get textDirection =>
-      _chartContainerIsRtl ? TextDirection.rtl : TextDirection.ltr;
+  TextDirection get textDirection => _chartContainerIsRtl ? TextDirection.rtl : TextDirection.ltr;
 
   @override
-  void enableA11yExploreMode(List<common.A11yNode> nodes,
-      {String? announcement}) {
+  void enableA11yExploreMode(List<common.A11yNode> nodes, {String? announcement}) {
     _a11yNodes = nodes;
     _exploreMode = true;
     _setNewPainter();
@@ -321,18 +310,12 @@ class ChartContainerCustomPaint extends CustomPainter {
       return oldPainter;
     } else {
       return new ChartContainerCustomPaint._internal(
-          chart: chart,
-          exploreMode: exploreMode,
-          a11yNodes: a11yNodes,
-          textDirection: textDirection);
+          chart: chart, exploreMode: exploreMode, a11yNodes: a11yNodes, textDirection: textDirection);
     }
   }
 
   ChartContainerCustomPaint._internal(
-      {required this.chart,
-      required this.exploreMode,
-      required this.a11yNodes,
-      required this.textDirection});
+      {required this.chart, required this.exploreMode, required this.a11yNodes, required this.textDirection});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -361,17 +344,12 @@ class ChartContainerCustomPaint extends CustomPainter {
     final nodes = <CustomPainterSemantics>[];
 
     for (common.A11yNode node in a11yNodes) {
-      final rect = new Rect.fromLTWH(
-          node.boundingBox.left.toDouble(),
-          node.boundingBox.top.toDouble(),
-          node.boundingBox.width.toDouble(),
-          node.boundingBox.height.toDouble());
+      final rect = new Rect.fromLTWH(node.boundingBox.left.toDouble(), node.boundingBox.top.toDouble(),
+          node.boundingBox.width.toDouble(), node.boundingBox.height.toDouble());
       nodes.add(new CustomPainterSemantics(
           rect: rect,
           properties: new SemanticsProperties(
-              value: node.label,
-              textDirection: textDirection,
-              onDidGainAccessibilityFocus: node.onFocus)));
+              value: node.label, textDirection: textDirection, onDidGainAccessibilityFocus: node.onFocus)));
     }
 
     return nodes;
